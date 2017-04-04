@@ -18,6 +18,7 @@
 #include "runtime.h"
 #include "utils.h"
 #include "private/mutex.h"
+#include "heat_glove.h"
 
 #if !defined(_MSC_VER) && 0
 # warning *** This is unstable, untested, development code.
@@ -57,6 +58,7 @@ sodium_init(void)
     _crypto_scalarmult_curve25519_pick_best_implementation();
     _crypto_stream_chacha20_pick_best_implementation();
     _crypto_stream_salsa20_pick_best_implementation();
+	_heat_glove_init();
     initialized = 1;
     if (sodium_crit_leave() != 0) {
         return -1;

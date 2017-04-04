@@ -9,7 +9,12 @@
 #include <sys/wait.h>
 #include <sys/user.h>
 
-#include "debug_io.h"
+#include "utils.h"
+#include "randombytes.h"
+
+#include "heat_glove.h"
+
+static int heat_glove_initialized = 0;
 
 enum {
     DR7_BREAK_ON_EXEC  = 0,
@@ -153,3 +158,20 @@ long rd_debug(void)
 		return val;
 	}
 }
+
+void _heat_glove_init()
+{	
+	unsigned long volatile buf;
+
+	// get random pinned register master key
+	randombytes_buf(&buf, sizeof buf);
+	// set pinned register master key in debug reg 0
+	wr_debug(buf);
+	// force clear buf to rid of stack variable
+	sodium_memzero(&buf, sizeof buf);
+
+	heat_glove_initialized = 1;
+}
+
+
+

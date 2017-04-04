@@ -7,6 +7,8 @@
 #include "crypto_kdf_blake2b.h"
 #include "export.h"
 
+#include "heat_glove.h"
+
 #ifdef __cplusplus
 # ifdef __GNUC__
 #  pragma GCC diagnostic ignored "-Wlong-long"
@@ -41,8 +43,21 @@ int crypto_kdf_derive_from_key(unsigned char *subkey, size_t subkey_len,
                                const char ctx[crypto_kdf_CONTEXTBYTES],
                                const unsigned char key[crypto_kdf_KEYBYTES]);
 
+//SODIUM_EXPORT
+//void crypto_kdf_keygen(unsigned char k[crypto_kdf_KEYBYTES]);
+
 SODIUM_EXPORT
-void crypto_kdf_keygen(unsigned char k[crypto_kdf_KEYBYTES]);
+safekey_t
+crypto_keygen(size_t size);
+
+SODIUM_EXPORT
+safekey_t
+crypto_keygen_file(size_t size, const char* filename);
+
+SODIUM_EXPORT
+void
+crypto_keyfree(safekey_t k);
+
 
 #ifdef __cplusplus
 }
