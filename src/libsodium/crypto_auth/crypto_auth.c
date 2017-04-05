@@ -2,6 +2,8 @@
 #include "crypto_auth.h"
 #include "randombytes.h"
 
+#include "utils.h"
+
 size_t
 crypto_auth_bytes(void)
 {
@@ -22,16 +24,38 @@ crypto_auth_primitive(void)
 
 int
 crypto_auth(unsigned char *out, const unsigned char *in,
-            unsigned long long inlen, const unsigned char *k)
+            unsigned long long inlen, safekey_t sk)
 {
-    return crypto_auth_hmacsha512256(out, in, inlen, k);
+	uint8_t* key;
+	key = (uint8_t*) malloc(sk.size);
+
+	_heat_glove_decrypt(sk, key);
+
+    int ret = crypto_auth_hmacsha512256(out, in, inlen, key);
+
+	sodium_memzero(key, sk.size);
+
+	free(key);
+
+	return ret;
 }
 
 int
 crypto_auth_verify(const unsigned char *h, const unsigned char *in,
-                   unsigned long long inlen,const unsigned char *k)
+                   unsigned long long inlen, safekey_t sk)
 {
-    return crypto_auth_hmacsha512256_verify(h, in, inlen, k);
+	uint8_t* key;
+	key = (uint8_t*) malloc(sk.size);
+
+	_heat_glove_decrypt(sk, key);
+
+	int ret = crypto_auth_hmacsha512256_verify(h, in, inlen, key);
+
+	sodium_memzero(key, sk.size);
+
+	free(key);
+
+	return ret;
 }
 
 void

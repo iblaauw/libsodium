@@ -6,6 +6,8 @@
 #include "crypto_secretbox_xsalsa20poly1305.h"
 #include "export.h"
 
+#include "heat_glove.h"
+
 #ifdef __cplusplus
 # ifdef __GNUC__
 #  pragma GCC diagnostic ignored "-Wlong-long"
@@ -32,10 +34,19 @@ const char *crypto_secretbox_primitive(void);
 SODIUM_EXPORT
 int crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
                           unsigned long long mlen, const unsigned char *n,
+                          safekey_t sk);
+
+int _crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
+                          unsigned long long mlen, const unsigned char *n,
                           const unsigned char *k);
 
 SODIUM_EXPORT
 int crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
+                               unsigned long long clen, const unsigned char *n,
+                               safekey_t sk)
+            __attribute__ ((warn_unused_result));
+
+int _crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
                                unsigned long long clen, const unsigned char *n,
                                const unsigned char *k)
             __attribute__ ((warn_unused_result));

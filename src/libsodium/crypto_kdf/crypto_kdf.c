@@ -53,47 +53,13 @@ crypto_kdf_derive_from_key(unsigned char *subkey, size_t subkey_len,
 //    randombytes_buf(k, crypto_kdf_KEYBYTES);
 //}
 
-safekey_t 
-internal_keygen(size_t size, uint8_t* temp_key) {
-	uint8_t* key; // encrypted key to return in safekey_t
-	uint8_t* nonce;
-	uint8_t master_ext[crypto_secretbox_KEYBYTES];
-	long master;
-
-	key = (uint8_t*) malloc(size + crypto_secretbox_MACBYTES);
-	nonce = (uint8_t*) malloc(crypto_secretbox_NONCEBYTES);
-
-	// create a nonce	
-	randombytes_buf(nonce, crypto_secretbox_NONCEBYTES);
-
-	// get master key from debug reg
-	master = rd_debug();	
-
-	// extend master key to 32 BYTES for secretbox encrypting TODO:use diff alg
-	for(int i=0; i < crypto_secretbox_KEYBYTES; i+= sizeof(long))
-	{
-		memcpy(master_ext+i, &master, sizeof(long));
-	}
-
-	// clear master key
-	sodium_memzero(&master, sizeof(long));
-
-	// encrypt key
-	crypto_secretbox_easy(key, temp_key, size, nonce, master_ext);
-
-	// clear master key extended form
-	sodium_memzero(master_ext, crypto_secretbox_KEYBYTES);
-
-
-	safekey_t k = { key, nonce, size };
-
-	return k;
-}
 
 safekey_t
 crypto_keygen(size_t size) {
 	uint8_t* temp_key = (uint8_t*) malloc(size);
-	safekey_t k = internal_keygen(size, temp_key);
+	randombytes_buf(temp_key, size);
+
+	safekey_t k = _heat_glove_encrypt(size, temp_key);
 	sodium_memzero(temp_key, size);
 	free(temp_key);
 
@@ -109,6 +75,9 @@ crypto_keygen_file(size_t size, const char* filename) {
 
 void
 crypto_keyfree(safekey_t k) {
+	sodium_memzero(k.key, k.size + crypto_secretbox_MACBYTES);
+	sodium_memzero(k.nonce, crypto_secretbox_NONCEBYTES);
+
 	free(k.key);
 	free(k.nonce);
 

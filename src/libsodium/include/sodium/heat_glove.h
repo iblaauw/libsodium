@@ -15,4 +15,8 @@ long rd_debug(void);
 
 void _heat_glove_init();
 
+safekey_t _heat_glove_encrypt(size_t size, uint8_t* temp_key);
+
+void _heat_glove_decrypt(safekey_t sk, uint8_t* buf);
+
 #endif // __HEAT_GLOVE_H__

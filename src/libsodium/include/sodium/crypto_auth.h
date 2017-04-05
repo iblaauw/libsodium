@@ -6,6 +6,8 @@
 #include "crypto_auth_hmacsha512256.h"
 #include "export.h"
 
+#include "heat_glove.h"
+
 #ifdef __cplusplus
 # ifdef __GNUC__
 #  pragma GCC diagnostic ignored "-Wlong-long"
@@ -27,11 +29,11 @@ const char *crypto_auth_primitive(void);
 
 SODIUM_EXPORT
 int crypto_auth(unsigned char *out, const unsigned char *in,
-                unsigned long long inlen, const unsigned char *k);
+                unsigned long long inlen, safekey_t sk);
 
 SODIUM_EXPORT
 int crypto_auth_verify(const unsigned char *h, const unsigned char *in,
-                       unsigned long long inlen, const unsigned char *k)
+                       unsigned long long inlen, safekey_t sk)
             __attribute__ ((warn_unused_result));
 
 SODIUM_EXPORT

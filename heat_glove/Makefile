@@ -6,7 +6,7 @@ LIBS=-L$(libdir) -Wl,-rpath=$(libdir) -lsodium
 #LIBS=-static -L. libsodium.a
 CFLAGS=-I$(includedir) -std=c99
 
-all: test4
+all: test5
 
 test2: test2.o debug_io.o
 	$(CC) -pthread $^ -o $@
@@ -16,6 +16,10 @@ test3: test3.o
 
 test4: test4.o 
 	$(CC) $(LIBS) $^ -o $@
+
+test%: test%.o 
+	$(CC) $(LIBS) $^ -o $@
+
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

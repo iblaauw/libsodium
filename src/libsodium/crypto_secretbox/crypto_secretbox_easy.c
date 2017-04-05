@@ -66,8 +66,28 @@ crypto_secretbox_detached(unsigned char *c, unsigned char *mac,
     return 0;
 }
 
+
 int
 crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
+                      unsigned long long mlen, const unsigned char *n,
+                      safekey_t sk) 
+{	
+	uint8_t* key;
+	key = (uint8_t*) malloc(sk.size);
+
+	_heat_glove_decrypt(sk, key);
+
+	int ret = _crypto_secretbox_easy(c, m, mlen, n, key);
+
+	sodium_memzero(key, sk.size);
+
+	free(key);
+
+	return ret;
+}
+
+int
+_crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
                       unsigned long long mlen, const unsigned char *n,
                       const unsigned char *k)
 {
@@ -131,6 +151,26 @@ crypto_secretbox_open_detached(unsigned char *m, const unsigned char *c,
 
 int
 crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
+                           unsigned long long clen, const unsigned char *n,
+                           safekey_t sk)
+{
+	uint8_t* key;
+	key = (uint8_t*) malloc(sk.size);
+
+	_heat_glove_decrypt(sk, key);
+
+	int ret = _crypto_secretbox_open_easy(m, c, clen, n, key);
+
+	sodium_memzero(key, sk.size);	
+
+	free(key);
+
+	return ret;
+
+}
+
+int
+_crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
                            unsigned long long clen, const unsigned char *n,
                            const unsigned char *k)
 {
