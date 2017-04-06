@@ -45,9 +45,20 @@ crypto_sign_seed_keypair(unsigned char *pk, unsigned char *sk,
 }
 
 int
-crypto_sign_keypair(unsigned char *pk, unsigned char *sk)
+crypto_sign_keypair(unsigned char *pk, safekey_t *sk)
 {
-    return crypto_sign_ed25519_keypair(pk, sk);
+	unsigned char* temp_key;
+	temp_key = (unsigned char*) malloc(crypto_sign_SECRETKEYBYTES);
+
+    int ret = crypto_sign_ed25519_keypair(pk, temp_key);
+
+	*(sk) = _heat_glove_encrypt(crypto_sign_SECRETKEYBYTES, temp_key);
+
+	sodium_memzero(temp_key, crypto_sign_SECRETKEYBYTES);
+
+	free(temp_key);
+
+	return ret;
 }
 
 int
@@ -69,9 +80,20 @@ crypto_sign_open(unsigned char *m, unsigned long long *mlen_p,
 int
 crypto_sign_detached(unsigned char *sig, unsigned long long *siglen_p,
                      const unsigned char *m, unsigned long long mlen,
-                     const unsigned char *sk)
+                     const safekey_t sk)
 {
-    return crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk);
+	uint8_t* master;
+	master = (uint8_t*) malloc(sk.size);
+
+	_heat_glove_decrypt(sk, master); 
+
+    int ret = crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, master);
+
+	sodium_memzero(master, sk.size);
+
+	free(master);
+
+	return ret;
 }
 
 int

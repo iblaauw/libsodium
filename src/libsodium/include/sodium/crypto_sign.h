@@ -13,6 +13,9 @@
 #include "crypto_sign_ed25519.h"
 #include "export.h"
 
+#include "utils.h"
+#include "heat_glove.h"
+
 #ifdef __cplusplus
 # ifdef __GNUC__
 #  pragma GCC diagnostic ignored "-Wlong-long"
@@ -50,7 +53,7 @@ int crypto_sign_seed_keypair(unsigned char *pk, unsigned char *sk,
                              const unsigned char *seed);
 
 SODIUM_EXPORT
-int crypto_sign_keypair(unsigned char *pk, unsigned char *sk);
+int crypto_sign_keypair(unsigned char *pk, safekey_t* sk);
 
 SODIUM_EXPORT
 int crypto_sign(unsigned char *sm, unsigned long long *smlen_p,
@@ -66,7 +69,7 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen_p,
 SODIUM_EXPORT
 int crypto_sign_detached(unsigned char *sig, unsigned long long *siglen_p,
                          const unsigned char *m, unsigned long long mlen,
-                         const unsigned char *sk);
+                         const safekey_t sk);
 
 SODIUM_EXPORT
 int crypto_sign_verify_detached(const unsigned char *sig,

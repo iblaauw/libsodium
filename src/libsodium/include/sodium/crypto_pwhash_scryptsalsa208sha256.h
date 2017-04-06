@@ -7,6 +7,9 @@
 
 #include "export.h"
 
+#include "utils.h"
+#include "heat_glove.h"
+
 #ifdef __cplusplus
 # ifdef __GNUC__
 #  pragma GCC diagnostic ignored "-Wlong-long"
@@ -75,7 +78,7 @@ SODIUM_EXPORT
 size_t crypto_pwhash_scryptsalsa208sha256_memlimit_sensitive(void);
 
 SODIUM_EXPORT
-int crypto_pwhash_scryptsalsa208sha256(unsigned char * const out,
+int crypto_pwhash_scryptsalsa208sha256(safekey_t*		  sk,
                                        unsigned long long outlen,
                                        const char * const passwd,
                                        unsigned long long passwdlen,

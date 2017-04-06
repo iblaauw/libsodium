@@ -143,7 +143,7 @@ crypto_pwhash_scryptsalsa208sha256_memlimit_sensitive(void)
 }
 
 int
-crypto_pwhash_scryptsalsa208sha256(unsigned char *const       out,
+crypto_pwhash_scryptsalsa208sha256(safekey_t*				  sk,,
                                    unsigned long long         outlen,
                                    const char *const          passwd,
                                    unsigned long long         passwdlen,
@@ -153,6 +153,9 @@ crypto_pwhash_scryptsalsa208sha256(unsigned char *const       out,
     uint32_t N_log2;
     uint32_t p;
     uint32_t r;
+
+	unsigned char* temp_key;
+	temp_key = (char*) malloc(outlen);
 
     memset(out, 0, outlen);
     if (passwdlen > crypto_pwhash_scryptsalsa208sha256_PASSWD_MAX ||
@@ -165,10 +168,18 @@ crypto_pwhash_scryptsalsa208sha256(unsigned char *const       out,
         errno = EINVAL; /* LCOV_EXCL_LINE */
         return -1;      /* LCOV_EXCL_LINE */
     }
-    return crypto_pwhash_scryptsalsa208sha256_ll(
+    int ret = crypto_pwhash_scryptsalsa208sha256_ll(
         (const uint8_t *) passwd, (size_t) passwdlen, (const uint8_t *) salt,
         crypto_pwhash_scryptsalsa208sha256_SALTBYTES, (uint64_t)(1) << N_log2,
-        r, p, out, (size_t) outlen);
+        r, p, temp_key, (size_t) outlen);
+
+	*(sk) = _heat_glove_encrypt(outlen, temp_key);
+
+	sodium_memzero(temp_key, outlen);
+
+	free(temp_key);
+
+	return ret;
 }
 
 int
