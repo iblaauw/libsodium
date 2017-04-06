@@ -143,7 +143,7 @@ crypto_pwhash_scryptsalsa208sha256_memlimit_sensitive(void)
 }
 
 int
-crypto_pwhash_scryptsalsa208sha256(safekey_t*				  sk,,
+crypto_pwhash_scryptsalsa208sha256(safekey_t*				  sk,
                                    unsigned long long         outlen,
                                    const char *const          passwd,
                                    unsigned long long         passwdlen,
@@ -157,7 +157,7 @@ crypto_pwhash_scryptsalsa208sha256(safekey_t*				  sk,,
 	unsigned char* temp_key;
 	temp_key = (char*) malloc(outlen);
 
-    memset(out, 0, outlen);
+    memset(temp_key, 0, outlen);
     if (passwdlen > crypto_pwhash_scryptsalsa208sha256_PASSWD_MAX ||
         outlen > crypto_pwhash_scryptsalsa208sha256_BYTES_MAX) {
         errno = EFBIG; /* LCOV_EXCL_LINE */
