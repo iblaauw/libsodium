@@ -58,6 +58,10 @@ SODIUM_EXPORT
 void
 crypto_keyfree(safekey_t k);
 
+SODIUM_EXPORT
+int
+crypto_key_extract(safekey_t sk, uint8_t* master);
+
 
 #ifdef __cplusplus
 }

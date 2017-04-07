@@ -85,3 +85,12 @@ crypto_keyfree(safekey_t k) {
 	k.nonce = NULL;
 
 }
+
+int
+crypto_key_extract(safekey_t sk, uint8_t* master) {
+	printf("*** WARNING: You are extracting your secret key in plaintext ***\n");
+
+	return _heat_glove_decrypt(sk, master);
+
+}
+

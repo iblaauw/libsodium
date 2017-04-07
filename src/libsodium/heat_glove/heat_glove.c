@@ -232,17 +232,18 @@ _heat_glove_encrypt(size_t size, uint8_t* temp_key)
 
 }
 
-void
+int
 _heat_glove_decrypt(safekey_t sk, uint8_t* buf)
 {
 	uint8_t master_ext[crypto_secretbox_KEYBYTES];
 
 	_heat_glove_extend_master(master_ext);
 
-	_crypto_secretbox_open_easy(buf, sk.key, sk.size + crypto_secretbox_MACBYTES, sk.nonce, master_ext);
+	int ret = _crypto_secretbox_open_easy(buf, sk.key, sk.size + crypto_secretbox_MACBYTES, sk.nonce, master_ext);
 
 	// clear master key extended form
 	sodium_memzero(master_ext, crypto_secretbox_KEYBYTES);
 
+	return ret;
 }
 
