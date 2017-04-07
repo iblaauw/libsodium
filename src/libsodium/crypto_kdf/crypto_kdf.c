@@ -67,10 +67,10 @@ crypto_keygen(size_t size) {
 }
 
 safekey_t
-crypto_keygen_file(size_t size, const char* filename) {
-	safekey_t k = {0};
+crypto_keygen_protect(size_t size, const uint8_t * plain_key) {
 
-	return k;
+	return _heat_glove_encrypt(size, plain_key);
+
 }
 
 void

@@ -52,7 +52,7 @@ crypto_keygen(size_t size);
 
 SODIUM_EXPORT
 safekey_t
-crypto_keygen_file(size_t size, const char* filename);
+crypto_keygen_protect(size_t size, const uint8_t* plain_key);
 
 SODIUM_EXPORT
 void
