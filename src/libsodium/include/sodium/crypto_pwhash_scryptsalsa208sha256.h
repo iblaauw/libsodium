@@ -78,7 +78,7 @@ SODIUM_EXPORT
 size_t crypto_pwhash_scryptsalsa208sha256_memlimit_sensitive(void);
 
 SODIUM_EXPORT
-int crypto_pwhash_scryptsalsa208sha256(safekey_t*		  sk,
+int crypto_pwhash_scryptsalsa208sha256(char * const out,
                                        unsigned long long outlen,
                                        const char * const passwd,
                                        unsigned long long passwdlen,
