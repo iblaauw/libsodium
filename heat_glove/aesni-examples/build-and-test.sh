@@ -1,10 +1,10 @@
 #!/bin/sh -e
 
-printf 'Building... '
-for bin in decrypt; do
-    gcc -Wall -nostdlib -o $bin $bin.s
-done
-printf 'done.\n'
+#printf 'Building... '
+#for bin in encrypt decrypt; do
+#    gcc -Wall -nostdlib -o $bin $bin.s
+#done
+#printf 'done.\n'
 
 n=$(wc -l < test-vectors)
 i=1
@@ -30,7 +30,7 @@ cat test-vectors | while read -r key plaintext ciphertext; do
     printf "$ciphertext" > expected_ct
 
     printf "$key$plaintext"  | ./test > actual_ct
-    printf "$key$ciphertext" | ./decrypt > actual_pt
+    printf "$key$ciphertext" | ./test_dec > actual_pt
 
     cmp expected_pt actual_pt
     cmp expected_ct actual_ct
