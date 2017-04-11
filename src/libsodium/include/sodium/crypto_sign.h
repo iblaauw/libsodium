@@ -53,12 +53,12 @@ int crypto_sign_seed_keypair(unsigned char *pk, unsigned char *sk,
                              const unsigned char *seed);
 
 SODIUM_EXPORT
-int crypto_sign_keypair(unsigned char *pk, safekey_t* sk);
+int crypto_sign_keypair(unsigned char *pk, unsigned char * sk);
 
 SODIUM_EXPORT
 int crypto_sign(unsigned char *sm, unsigned long long *smlen_p,
                 const unsigned char *m, unsigned long long mlen,
-                const unsigned char *sk);
+                unsigned char *sk);
 
 SODIUM_EXPORT
 int crypto_sign_open(unsigned char *m, unsigned long long *mlen_p,
@@ -69,7 +69,7 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen_p,
 SODIUM_EXPORT
 int crypto_sign_detached(unsigned char *sig, unsigned long long *siglen_p,
                          const unsigned char *m, unsigned long long mlen,
-                         const safekey_t sk);
+                         unsigned char *sk);
 
 SODIUM_EXPORT
 int crypto_sign_verify_detached(const unsigned char *sig,

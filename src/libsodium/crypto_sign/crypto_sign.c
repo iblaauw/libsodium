@@ -45,18 +45,19 @@ crypto_sign_seed_keypair(unsigned char *pk, unsigned char *sk,
 }
 
 int
-crypto_sign_keypair(unsigned char *pk, safekey_t *sk)
+crypto_sign_keypair(unsigned char *pk, unsigned char *sk)
 {
-	unsigned char* temp_key;
-	temp_key = (unsigned char*) malloc(crypto_sign_SECRETKEYBYTES);
+	//unsigned char* temp_key;
+	//temp_key = (unsigned char*) malloc(crypto_sign_SECRETKEYBYTES);
 
-    int ret = crypto_sign_ed25519_keypair(pk, temp_key);
+    int ret = crypto_sign_ed25519_keypair(pk, sk);
 
 	//*(sk) = _heat_glove_encrypt(crypto_sign_SECRETKEYBYTES, temp_key);
+	_heat_glove_encrypt(sk, crypto_sign_SECRETKEYBYTES);
 
-	sodium_memzero(temp_key, crypto_sign_SECRETKEYBYTES);
+	//sodium_memzero(temp_key, crypto_sign_SECRETKEYBYTES);
 
-	free(temp_key);
+	//free(temp_key);
 
 	return ret;
 }
@@ -64,9 +65,13 @@ crypto_sign_keypair(unsigned char *pk, safekey_t *sk)
 int
 crypto_sign(unsigned char *sm, unsigned long long *smlen_p,
             const unsigned char *m, unsigned long long mlen,
-            const unsigned char *sk)
+            unsigned char *sk)
 {
-    return crypto_sign_ed25519(sm, smlen_p, m, mlen, sk);
+	_heat_glove_decrypt(sk, crypto_sign_SECRETKEYBYTES);
+    int ret = crypto_sign_ed25519(sm, smlen_p, m, mlen, sk);
+	_heat_glove_encrypt(sk, crypto_sign_SECRETKEYBYTES);
+
+	return ret;
 }
 
 int
@@ -80,18 +85,21 @@ crypto_sign_open(unsigned char *m, unsigned long long *mlen_p,
 int
 crypto_sign_detached(unsigned char *sig, unsigned long long *siglen_p,
                      const unsigned char *m, unsigned long long mlen,
-                     const safekey_t sk)
+                     unsigned char *sk)
 {
-	uint8_t* master;
-	master = (uint8_t*) malloc(sk.size);
+	//uint8_t* master;
+	//master = (uint8_t*) malloc(sk.size);
 
 	//_heat_glove_decrypt(sk, master); 
+	_heat_glove_decrypt(sk, crypto_sign_SECRETKEYBYTES);
 
-    int ret = crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, master);
+    int ret = crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk);
+	
+	_heat_glove_encrypt(sk, crypto_sign_SECRETKEYBYTES);
 
-	sodium_memzero(master, sk.size);
+	//sodium_memzero(master, sk.size);
 
-	free(master);
+	//free(master);
 
 	return ret;
 }

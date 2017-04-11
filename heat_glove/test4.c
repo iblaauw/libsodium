@@ -33,10 +33,8 @@ int main() {
 	randombytes_buf(key, sizeof(key));
 	randombytes_buf(nonce, sizeof(nonce));
 
-	printf("aaa\n");
-
 	crypto_secretbox_easy(ciphertext, MESSAGE, MESSAGE_LEN, nonce, key);
-	printf("bbb\n");
+	
 	unsigned char decrypted[MESSAGE_LEN];
 	if (crypto_secretbox_open_easy(decrypted, ciphertext, CIPHERTEXT_LEN, nonce, key) != 0) {
 			/* message forged! */
