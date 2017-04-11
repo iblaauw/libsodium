@@ -70,18 +70,13 @@ crypto_secretbox_detached(unsigned char *c, unsigned char *mac,
 int
 crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
                       unsigned long long mlen, const unsigned char *n,
-                      safekey_t sk) 
+                      unsigned char *k) 
 {	
-	uint8_t* key;
-	key = (uint8_t*) malloc(sk.size);
+	_heat_glove_decrypt(k, crypto_secretbox_KEYBYTES);
 
-	_heat_glove_decrypt(sk, key);
+	int ret = _crypto_secretbox_easy(c, m, mlen, n, k);
 
-	int ret = _crypto_secretbox_easy(c, m, mlen, n, key);
-
-	sodium_memzero(key, sk.size);
-
-	free(key);
+	_heat_glove_decrypt(k, crypto_secretbox_KEYBYTES);
 
 	return ret;
 }
@@ -89,7 +84,7 @@ crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
 int
 _crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
                       unsigned long long mlen, const unsigned char *n,
-                      const unsigned char *k)
+                      unsigned char *k)
 {
     if (mlen > SIZE_MAX - crypto_secretbox_MACBYTES) {
         return -1;
@@ -152,18 +147,13 @@ crypto_secretbox_open_detached(unsigned char *m, const unsigned char *c,
 int
 crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
                            unsigned long long clen, const unsigned char *n,
-                           safekey_t sk)
+                           unsigned char *k)
 {
-	uint8_t* key;
-	key = (uint8_t*) malloc(sk.size);
+	_heat_glove_decrypt(k, crypto_secretbox_KEYBYTES);
 
-	_heat_glove_decrypt(sk, key);
+	int ret = _crypto_secretbox_open_easy(m, c, clen, n, k);
 
-	int ret = _crypto_secretbox_open_easy(m, c, clen, n, key);
-
-	sodium_memzero(key, sk.size);	
-
-	free(key);
+	_heat_glove_encrypt(k, crypto_secretbox_KEYBYTES);
 
 	return ret;
 
@@ -172,7 +162,7 @@ crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
 int
 _crypto_secretbox_open_easy(unsigned char *m, const unsigned char *c,
                            unsigned long long clen, const unsigned char *n,
-                           const unsigned char *k)
+                           unsigned char *k)
 {
     if (clen < crypto_secretbox_MACBYTES) {
         return -1;

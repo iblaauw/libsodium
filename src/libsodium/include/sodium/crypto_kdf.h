@@ -47,20 +47,16 @@ int crypto_kdf_derive_from_key(unsigned char *subkey, size_t subkey_len,
 //void crypto_kdf_keygen(unsigned char k[crypto_kdf_KEYBYTES]);
 
 SODIUM_EXPORT
-safekey_t
-crypto_keygen(size_t size);
-
-SODIUM_EXPORT
-safekey_t
-crypto_keygen_protect(size_t size, const uint8_t* plain_key);
+void
+crypto_keygen(unsigned char k[crypto_kdf_KEYBYTES]);
 
 SODIUM_EXPORT
 void
-crypto_keyfree(safekey_t k);
+crypto_keygen_protect(uint8_t * const plain_key, size_t size);
 
 SODIUM_EXPORT
-int
-crypto_key_extract(safekey_t sk, uint8_t* master);
+void
+crypto_key_extract(uint8_t* const master, size_t size);
 
 
 #ifdef __cplusplus

@@ -14,6 +14,7 @@
 #include "crypto_secretbox.h"
 
 #include "heat_glove.h"
+#include "_hg_encdec.h"
 
 static int heat_glove_initialized = 0;
 
@@ -174,26 +175,6 @@ void _heat_glove_init()
 	heat_glove_initialized = 1;
 }
 
-void
-_heat_glove_extend_master(uint8_t* master_ext)
-{
-	long master;
-
-	// get master key from debug reg
-	master = rd_debug();	
-
-	// extend master key to 32 BYTES for secretbox encrypting TODO:use diff alg
-	for(int i=0; i < crypto_secretbox_KEYBYTES; i+= sizeof(long))
-	{
-		memcpy(master_ext+i, &master, sizeof(long));
-	}
-
-	// clear master key
-	sodium_memzero(&master, sizeof(long));
-
-
-}
-
 void printb(uint8_t* arr, size_t size) {
 	printf("0x");
 	for(int i = 0; i < size; i++) {
@@ -202,48 +183,29 @@ void printb(uint8_t* arr, size_t size) {
 	printf("\n");
 }
 
-safekey_t
-_heat_glove_encrypt(size_t size, uint8_t* temp_key)
+void
+_heat_glove_encrypt(uint8_t* buf, size_t size)
 {
-	uint8_t* key; // encrypted key to return in safekey_t
-	uint8_t* nonce;
-	uint8_t master_ext[crypto_secretbox_KEYBYTES];
-
-	key = (uint8_t*) malloc(size + crypto_secretbox_MACBYTES);
-	nonce = (uint8_t*) malloc(crypto_secretbox_NONCEBYTES);
-
-	// create a nonce	
-	randombytes_buf(nonce, crypto_secretbox_NONCEBYTES);
-
-	// get extended master
-	_heat_glove_extend_master(master_ext);
+	uint32_t master= rd_debug();
 
 	// encrypt key
-	_crypto_secretbox_easy(key, temp_key, size, nonce, master_ext);
+	_hg_encrypt(master, buf, size);
 
 	// clear master key extended form
-	sodium_memzero(master_ext, crypto_secretbox_KEYBYTES);
-
-
-	safekey_t k = { key, nonce, size };
-
-
-	return k;
+	sodium_memzero(master, 32);
 
 }
 
-int
-_heat_glove_decrypt(safekey_t sk, uint8_t* buf)
+void
+_heat_glove_decrypt(uint8_t* buf, size_t size)
 {
-	uint8_t master_ext[crypto_secretbox_KEYBYTES];
+	uint32_t master = rd_debug();
 
-	_heat_glove_extend_master(master_ext);
-
-	int ret = _crypto_secretbox_open_easy(buf, sk.key, sk.size + crypto_secretbox_MACBYTES, sk.nonce, master_ext);
+	// decrypt key
+	_hg_decrypt(master, buf, size);
 
 	// clear master key extended form
-	sodium_memzero(master_ext, crypto_secretbox_KEYBYTES);
+	sodium_memzero(&master, 32);
 
-	return ret;
 }
 

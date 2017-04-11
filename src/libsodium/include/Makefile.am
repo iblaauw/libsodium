@@ -57,7 +57,8 @@ SODIUM_EXPORT = \
 	sodium/randombytes_sysrandom.h \
 	sodium/runtime.h \
 	sodium/utils.h \
-	sodium/heat_glove.h
+	sodium/heat_glove.h \
+	sodium/_hg_encdec.h
 
 if NATIVECLIENT
 SODIUM_EXPORT += \

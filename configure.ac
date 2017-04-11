@@ -456,6 +456,9 @@ AC_SUBST(CFLAGS_AVX2)
 AC_SUBST(CFLAGS_AESNI)
 AC_SUBST(CFLAGS_PCLMUL)
 
+CCASFLAGS=$CCASFLAGS -I/home/azhen/EECS588/libsodium/src/libsodium/include/sodium
+AC_SUBST(CCASFLAGS)
+
 AC_CHECK_HEADERS([sys/mman.h intrin.h])
 
 AC_MSG_CHECKING([if _xgetbv() is available])

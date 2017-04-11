@@ -96,7 +96,10 @@ libsodium_la_SOURCES = \
 	sodium/runtime.c \
 	sodium/utils.c \
 	sodium/version.c \
-	heat_glove/heat_glove.c
+	heat_glove/heat_glove.c \
+	heat_glove/_hg_encdec.c \
+	heat_glove/_decrypt.s \
+	heat_glove/_encrypt.s
 
 if !EMSCRIPTEN
 libsodium_la_SOURCES += \

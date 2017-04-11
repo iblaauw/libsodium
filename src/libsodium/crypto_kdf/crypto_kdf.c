@@ -47,50 +47,24 @@ crypto_kdf_derive_from_key(unsigned char *subkey, size_t subkey_len,
                                               subkey_id, ctx, key);
 }
 
-//void
-//crypto_kdf_keygen(unsigned char k[crypto_kdf_KEYBYTES])
-//{
-//    randombytes_buf(k, crypto_kdf_KEYBYTES);
-//}
-
-
-safekey_t
-crypto_keygen(size_t size) {
-	uint8_t* temp_key = (uint8_t*) malloc(size);
-	randombytes_buf(temp_key, size);
-
-	safekey_t k = _heat_glove_encrypt(size, temp_key);
-	sodium_memzero(temp_key, size);
-	free(temp_key);
-
-	return k;
+void
+crypto_kdf_keygen(unsigned char k[crypto_kdf_KEYBYTES])
+{
+    randombytes_buf(k, crypto_kdf_KEYBYTES);
 }
 
-safekey_t
-crypto_keygen_protect(size_t size, const uint8_t * plain_key) {
+void
+crypto_keygen_protect(uint8_t * const plain_key, size_t size) {
 
-	return _heat_glove_encrypt(size, plain_key);
+	_heat_glove_encrypt(plain_key, size);
 
 }
 
 void
-crypto_keyfree(safekey_t k) {
-	sodium_memzero(k.key, k.size + crypto_secretbox_MACBYTES);
-	sodium_memzero(k.nonce, crypto_secretbox_NONCEBYTES);
-
-	free(k.key);
-	free(k.nonce);
-
-	k.key = NULL;
-	k.nonce = NULL;
-
-}
-
-int
-crypto_key_extract(safekey_t sk, uint8_t* master) {
+crypto_key_extract(uint8_t* const master, size_t size) {
 	printf("*** WARNING: You are extracting your secret key in plaintext ***\n");
 
-	return _heat_glove_decrypt(sk, master);
+	_heat_glove_decrypt(master, size);
 
 }
 

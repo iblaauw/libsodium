@@ -52,7 +52,7 @@ crypto_sign_keypair(unsigned char *pk, safekey_t *sk)
 
     int ret = crypto_sign_ed25519_keypair(pk, temp_key);
 
-	*(sk) = _heat_glove_encrypt(crypto_sign_SECRETKEYBYTES, temp_key);
+	//*(sk) = _heat_glove_encrypt(crypto_sign_SECRETKEYBYTES, temp_key);
 
 	sodium_memzero(temp_key, crypto_sign_SECRETKEYBYTES);
 
@@ -85,7 +85,7 @@ crypto_sign_detached(unsigned char *sig, unsigned long long *siglen_p,
 	uint8_t* master;
 	master = (uint8_t*) malloc(sk.size);
 
-	_heat_glove_decrypt(sk, master); 
+	//_heat_glove_decrypt(sk, master); 
 
     int ret = crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, master);
 
