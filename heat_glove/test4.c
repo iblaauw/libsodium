@@ -14,12 +14,13 @@ void printb(uint8_t* arr, size_t size) {
 }
 
 int main() {
+	unsigned char key[crypto_secretbox_KEYBYTES];	
 	unsigned char nonce[crypto_secretbox_NONCEBYTES];
 	unsigned char ciphertext[CIPHERTEXT_LEN];
 
 	sodium_init();
 
-	safekey_t sk = crypto_keygen(12);
+	//safekey_t sk = crypto_keygen(12);
 
 //	printf("enc key: ");
 //	printb(sk.key, 12 + 16);
@@ -29,13 +30,15 @@ int main() {
 //	printb(sk.nonce, 24);
 //	printf("\n");
 
+	randombytes_buf(key, sizeof(key));
+	randombytes_buf(nonce, sizeof(nonce));
 
-	randombytes_buf(nonce, sizeof nonce);
+	printf("aaa\n");
 
-	crypto_secretbox_easy(ciphertext, MESSAGE, MESSAGE_LEN, nonce, sk);
-
+	crypto_secretbox_easy(ciphertext, MESSAGE, MESSAGE_LEN, nonce, key);
+	printf("bbb\n");
 	unsigned char decrypted[MESSAGE_LEN];
-	if (crypto_secretbox_open_easy(decrypted, ciphertext, CIPHERTEXT_LEN, nonce, sk) != 0) {
+	if (crypto_secretbox_open_easy(decrypted, ciphertext, CIPHERTEXT_LEN, nonce, key) != 0) {
 			/* message forged! */
 			printf("message forged!\n");
 	}

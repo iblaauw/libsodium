@@ -76,7 +76,7 @@ crypto_secretbox_easy(unsigned char *c, const unsigned char *m,
 
 	int ret = _crypto_secretbox_easy(c, m, mlen, n, k);
 
-	_heat_glove_decrypt(k, crypto_secretbox_KEYBYTES);
+	_heat_glove_encrypt(k, crypto_secretbox_KEYBYTES);
 
 	return ret;
 }

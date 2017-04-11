@@ -192,7 +192,7 @@ _heat_glove_encrypt(uint8_t* buf, size_t size)
 	_hg_encrypt(master, buf, size);
 
 	// clear master key extended form
-	sodium_memzero(master, 32);
+	sodium_memzero(&master, sizeof(master));
 
 }
 
@@ -205,7 +205,7 @@ _heat_glove_decrypt(uint8_t* buf, size_t size)
 	_hg_decrypt(master, buf, size);
 
 	// clear master key extended form
-	sodium_memzero(&master, 32);
+	sodium_memzero(&master, sizeof(master));
 
 }
 
